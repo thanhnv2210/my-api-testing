@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version '2.11.2' // Allure plugin
+}
+
+group 'com.thanh'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    restAssuredVersion = "5.4.0"
+    lombokVersion = "1.18.32"
+    jacksonVersion = "2.14.0"
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "io.rest-assured:json-path:${restAssuredVersion}"
+    testImplementation "io.rest-assured:xml-path:${restAssuredVersion}"
+    testImplementation 'io.qameta.allure:allure-junit5:2.24.0'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+
+    // For main code
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // For test code
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // Jackson dependencies
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'allure.results.directory', 'build/allure-results'
+//    abc
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+    systemProperty 'junit.jupiter.execution.parallel.mode.classes.default', 'concurrent'
+
+    systemProperty "baseUrl", "http://localhost:8090"
+    systemProperty "telepinUrl", "http://localhost:8090"
+
+}
